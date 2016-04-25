@@ -14,7 +14,20 @@ from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
 from keras.initializations import identity, normal 
 from keras.utils import np_utils
+import os
+import sys
+import cPickle as pickle
+import time
 
+
+if len(sys.argv)>1:
+    fname = sys.argv[1]
+else:
+    print ("Requires a file to store the output results")
+    exit(0)
+
+# to record the execution time
+start_time = time.clock()
 
 # architecture details
 output_classes = 10
@@ -24,7 +37,7 @@ hidden_units = 100
 learning_rate = 1e-6
 
 # running details
-num_epochs = 900
+num_epochs = 2
 batch_size = 32
 
 
@@ -67,11 +80,28 @@ model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accu
 print('RNN Model Evaluation:')
 
 # Train the model for a fixed number of epochs
-model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=num_epochs, verbose=1, 
+hist = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=num_epochs, verbose=1, 
             validation_data=(X_test, Y_test))
 
 # Compute the loss on the input data, batch by batch
 scores = model.evaluate(X_test, Y_test, verbose=0)
 
-print('RNN Model Test score:', scores[0])
-print('RNN Model Test accuracy:', scores[1])
+test_score = scores[0]
+test_accuracy = scores[1]
+print('RNN Model Test score:', test_score)
+print('RNN Model Test accuracy:', test_accuracy)
+
+execution_time = time.clock() - start_time
+
+data = {
+        'test_score': test_score,
+        'test_accuracy': test_accuracy,
+        'hist': hist, 
+        'execution_time': execution_time,
+        }
+
+pickle.dump(data, open(fname, 'wb'))
+print ("pickle complete")
+print (fname)
+print ("Execution time: ", execution_time)
+
