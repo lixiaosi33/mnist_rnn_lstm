@@ -14,6 +14,7 @@ from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
 from keras.initializations import identity, normal 
 from keras.utils import np_utils
+from keras.callbacks import History
 import os
 import sys
 import cPickle as pickle
@@ -37,7 +38,7 @@ hidden_units = 100
 learning_rate = 1e-6
 
 # running details
-num_epochs = 2
+num_epochs = 1
 batch_size = 32
 
 
@@ -80,8 +81,10 @@ model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accu
 print('RNN Model Evaluation:')
 
 # Train the model for a fixed number of epochs
-hist = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=num_epochs, verbose=1, 
-            validation_data=(X_test, Y_test))
+history = History()
+model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=num_epochs, verbose=1, 
+            callbacks=[history], validation_data=(X_test, Y_test))
+
 
 # Compute the loss on the input data, batch by batch
 scores = model.evaluate(X_test, Y_test, verbose=0)
@@ -96,7 +99,7 @@ execution_time = time.clock() - start_time
 data = {
         'test_score': test_score,
         'test_accuracy': test_accuracy,
-        'hist': hist, 
+        'history': history.history,
         'execution_time': execution_time,
         }
 
