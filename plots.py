@@ -20,7 +20,7 @@ data = pickle.load(open(fname, 'rb'))
 test_score = data['test_score']
 test_accuracy = data['test_accuracy']
 history = data['history'] 
-execution_time = data['execution_time']    
+execution_time = data['execution_time']   
 
 # list of accuracy values over the epochs
 accuracy = history['acc']  
@@ -37,3 +37,8 @@ draw_plot(val_acc)
 # list of validation loss values over the epochs
 val_loss = history['val_loss']
 draw_plot(val_loss)
+
+
+print "Test Score: ", test_score
+print "Test Accuracy: ", test_accuracy
+print "Execution Time: ", execution_time
